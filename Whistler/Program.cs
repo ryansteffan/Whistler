@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using Whistler.AppCommands;
 using Whistler.Configuration;
 using Whistler.Logging;
+using Whistler.Music;
 
 namespace Whistler;
 
@@ -15,6 +16,7 @@ internal class Program
     private static LoggingService? _loggingService;
     private static Logger _applicationLogger;
     private static List<IAppCommand> _appCommands;
+    private static Dictionary<string, MusicQueue<Song>>? _musicQueues;
 
     public static async Task Main(string[] args)
     {
@@ -23,10 +25,14 @@ internal class Program
         _client = new DiscordSocketClient(_botConfig.Config);
         _loggingService = new LoggingService(_client, CommandService, _applicationLogger);
 
+        // Set up the default playlists
+        _musicQueues = new Dictionary<string, MusicQueue<Song>>();
+        _musicQueues["default"] = new MusicQueue<Song>();
+        
         // Add all app commands to this List.
         _appCommands = new List<IAppCommand>()
         {
-            new MusicControls(_client)
+            new MusicControls(_client, ref _musicQueues)
         };
 
         _client.Ready += ClientOnReady;

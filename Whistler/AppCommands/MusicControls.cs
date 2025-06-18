@@ -8,7 +8,11 @@ using Whistler.Music;
 
 namespace Whistler.AppCommands;
 
-public class MusicControls(DiscordSocketClient client, string commandName = "music-controls") : IAppCommand
+public class MusicControls(
+    DiscordSocketClient client, 
+    ref Dictionary<string, MusicQueue<Song>> musicQueues, 
+    string commandName = "music-controls"
+    ) : IAppCommand
 {
     public string CommandName { get; } = commandName;
     private Logger CommandLogger { get; set; } = Logger.GetLogger("MakeFilterChannel Logger", LogLevel.Info);
